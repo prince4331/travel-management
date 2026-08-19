@@ -84,11 +84,11 @@ export default function FinancePage() {
       title="Finance"
       description="Track personal and group expenses, outstanding balances, and export audit-ready reports."
       actions={
-        <div className="flex gap-2">
-          <Button onClick={() => setShowAddForm(!showAddForm)} variant="primary">
-            <Plus className="mr-2 h-4 w-4" /> Add Personal Expense
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button onClick={() => setShowAddForm(!showAddForm)} variant="primary" className="w-full sm:w-auto">
+            <Plus className="mr-2 h-4 w-4" /> <span className="hidden sm:inline">Add Personal Expense</span><span className="sm:hidden">Add Expense</span>
           </Button>
-          <Button onClick={exportAll} variant="secondary">
+          <Button onClick={exportAll} variant="secondary" className="w-full sm:w-auto">
             <Download className="mr-2 h-4 w-4" /> Export all
           </Button>
         </div>
@@ -102,7 +102,7 @@ export default function FinancePage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleAddExpense} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <input
                   type="text"
                   placeholder="Title"
@@ -143,16 +143,16 @@ export default function FinancePage() {
                   <option value="INR">INR</option>
                 </select>
               </div>
-              <div className="flex gap-2">
-                <Button type="submit" isLoading={createPersonalExpense.isPending}>Add Expense</Button>
-                <Button type="button" variant="ghost" onClick={() => setShowAddForm(false)}>Cancel</Button>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button type="submit" isLoading={createPersonalExpense.isPending} className="w-full sm:w-auto">Add Expense</Button>
+                <Button type="button" variant="ghost" onClick={() => setShowAddForm(false)} className="w-full sm:w-auto">Cancel</Button>
               </div>
             </form>
           </CardContent>
         </Card>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-4">
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardContent className="space-y-3">
             <p className="text-sm font-medium text-slate-600">Group Expenses</p>
@@ -188,57 +188,66 @@ export default function FinancePage() {
         <CardHeader>
           <CardTitle>Personal Expenses</CardTitle>
         </CardHeader>
-        <CardContent className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200 text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-              <tr>
-                <th className="px-4 py-3 text-left">Title</th>
-                <th className="px-4 py-3 text-left">Category</th>
-                <th className="px-4 py-3 text-left">Amount</th>
-                <th className="px-4 py-3 text-left">Currency</th>
-                <th className="px-4 py-3 text-left">Date</th>
-                <th className="px-4 py-3 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {loadingPersonal && personalExpenses.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="px-4 py-6 text-center text-sm text-slate-500">
-                    Loading expenses...
-                  </td>
-                </tr>
-              )}
-              {!loadingPersonal && personalExpenses.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="px-4 py-6 text-center text-sm text-slate-500">
-                    No personal expenses yet. Add one above!
-                  </td>
-                </tr>
-              )}
-              {personalExpenses.map((expense: any) => (
-                <tr key={expense.id}>
-                  <td className="px-4 py-3 text-slate-600">{expense.title}</td>
-                  <td className="px-4 py-3 text-slate-500">{expense.category}</td>
-                  <td className="px-4 py-3 text-slate-600">{expense.amount.toFixed(2)}</td>
-                  <td className="px-4 py-3 text-slate-500">{expense.currency}</td>
-                  <td className="px-4 py-3 text-slate-500">{format(new Date(expense.incurredOn), "PP")}</td>
-                  <td className="px-4 py-3">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        if (confirm("Delete this expense?")) {
-                          deletePersonalExpense.mutate(expense.id);
-                        }
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <CardContent>
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <div className="inline-block min-w-full align-middle">
+              <table className="min-w-full divide-y divide-slate-200 text-sm">
+                <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3 text-left">Title</th>
+                    <th className="px-4 py-3 text-left hidden sm:table-cell">Category</th>
+                    <th className="px-4 py-3 text-left">Amount</th>
+                    <th className="px-4 py-3 text-left hidden md:table-cell">Currency</th>
+                    <th className="px-4 py-3 text-left hidden lg:table-cell">Date</th>
+                    <th className="px-4 py-3 text-left">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {loadingPersonal && personalExpenses.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-6 text-center text-sm text-slate-500">
+                        Loading expenses...
+                      </td>
+                    </tr>
+                  )}
+                  {!loadingPersonal && personalExpenses.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-6 text-center text-sm text-slate-500">
+                        No personal expenses yet. Add one above!
+                      </td>
+                    </tr>
+                  )}
+                  {personalExpenses.map((expense: any) => (
+                    <tr key={expense.id}>
+                      <td className="px-4 py-3 text-slate-600">
+                        <div className="font-medium">{expense.title}</div>
+                        <div className="sm:hidden text-xs text-slate-500 mt-1">{expense.category} • {expense.currency}</div>
+                        <div className="lg:hidden text-xs text-slate-500 mt-1">{format(new Date(expense.incurredOn), "PP")}</div>
+                      </td>
+                      <td className="px-4 py-3 text-slate-500 hidden sm:table-cell">{expense.category}</td>
+                      <td className="px-4 py-3 text-slate-600 font-medium">{expense.amount.toFixed(2)}</td>
+                      <td className="px-4 py-3 text-slate-500 hidden md:table-cell">{expense.currency}</td>
+                      <td className="px-4 py-3 text-slate-500 hidden lg:table-cell">{format(new Date(expense.incurredOn), "PP")}</td>
+                      <td className="px-4 py-3">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            if (confirm("Delete this expense?")) {
+                              deletePersonalExpense.mutate(expense.id);
+                            }
+                          }}
+                        >
+                          <span className="hidden sm:inline">Delete</span>
+                          <span className="sm:hidden">×</span>
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -247,45 +256,55 @@ export default function FinancePage() {
         <CardHeader>
           <CardTitle>Group Expenses</CardTitle>
         </CardHeader>
-        <CardContent className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200 text-sm">
-            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-              <tr>
-                <th className="px-4 py-3 text-left">Group</th>
-                <th className="px-4 py-3 text-left">Title</th>
-                <th className="px-4 py-3 text-left">Category</th>
-                <th className="px-4 py-3 text-left">Amount</th>
-                <th className="px-4 py-3 text-left">Currency</th>
-                <th className="px-4 py-3 text-left">Date</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {isLoading && groupExpenses.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="px-4 py-6 text-center text-sm text-slate-500">
-                    Loading expenses...
-                  </td>
-                </tr>
-              )}
-              {!isLoading && groupExpenses.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="px-4 py-6 text-center text-sm text-slate-500">
-                    No group expenses recorded yet.
-                  </td>
-                </tr>
-              )}
-              {groupExpenses.map(({ group, expense }) => (
-                <tr key={`group-${expense.id}`}>
-                  <td className="px-4 py-3 text-slate-600">{group.title}</td>
-                  <td className="px-4 py-3 text-slate-600">{expense.title}</td>
-                  <td className="px-4 py-3 text-slate-500">{expense.category}</td>
-                  <td className="px-4 py-3 text-slate-600">{expense.amount.toFixed(2)}</td>
-                  <td className="px-4 py-3 text-slate-500">{expense.currency}</td>
-                  <td className="px-4 py-3 text-slate-500">{format(new Date(expense.incurredOn), "PP")}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <CardContent>
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <div className="inline-block min-w-full align-middle">
+              <table className="min-w-full divide-y divide-slate-200 text-sm">
+                <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3 text-left">Group</th>
+                    <th className="px-4 py-3 text-left">Title</th>
+                    <th className="px-4 py-3 text-left hidden sm:table-cell">Category</th>
+                    <th className="px-4 py-3 text-left">Amount</th>
+                    <th className="px-4 py-3 text-left hidden md:table-cell">Currency</th>
+                    <th className="px-4 py-3 text-left hidden lg:table-cell">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {isLoading && groupExpenses.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-6 text-center text-sm text-slate-500">
+                        Loading expenses...
+                      </td>
+                    </tr>
+                  )}
+                  {!isLoading && groupExpenses.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-4 py-6 text-center text-sm text-slate-500">
+                        No group expenses recorded yet.
+                      </td>
+                    </tr>
+                  )}
+                  {groupExpenses.map(({ group, expense }) => (
+                    <tr key={`group-${expense.id}`}>
+                      <td className="px-4 py-3 text-slate-600">
+                        <div className="font-medium">{group.title}</div>
+                      </td>
+                      <td className="px-4 py-3 text-slate-600">
+                        <div className="font-medium">{expense.title}</div>
+                        <div className="sm:hidden text-xs text-slate-500 mt-1">{expense.category} • {expense.currency}</div>
+                        <div className="lg:hidden text-xs text-slate-500 mt-1">{format(new Date(expense.incurredOn), "PP")}</div>
+                      </td>
+                      <td className="px-4 py-3 text-slate-500 hidden sm:table-cell">{expense.category}</td>
+                      <td className="px-4 py-3 text-slate-600 font-medium">{expense.amount.toFixed(2)}</td>
+                      <td className="px-4 py-3 text-slate-500 hidden md:table-cell">{expense.currency}</td>
+                      <td className="px-4 py-3 text-slate-500 hidden lg:table-cell">{format(new Date(expense.incurredOn), "PP")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </AppLayout>
